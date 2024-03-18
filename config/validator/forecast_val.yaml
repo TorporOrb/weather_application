@@ -1,0 +1,36 @@
+App\Entity\Forecast:
+  properties:
+    pressure:
+      - GreaterThanOrEqual:
+          value: 900
+          groups: [new, edit]
+    humidity:
+      - Range:
+          min: 0
+          max: 100
+          groups: [new, edit]
+    windSpeed:
+      - PositiveOrZero:  
+          groups: [new, edit]
+    windDeg:
+      - PositiveOrZero:
+          groups: [new, edit]
+      - LessThan: 
+          value: 360
+          groups: [new, edit]
+    cloudiness:
+      - Range:
+          min: 0
+          max: 100
+          groups: [new, edit]
+    icon: 
+      - Choice:
+          choices: [ sun, cloud, cloud-sun ]
+          groups: [new, edit]
+    
+
+
+
+
+        
+    
