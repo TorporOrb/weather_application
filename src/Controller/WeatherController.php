@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Exception\LocationNotFoundException;
+use App\Service\ForecastService;
 use App\Repository\ForecastRepository;
 use App\Repository\LocationRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,21 +19,16 @@ class WeatherController extends AbstractController
 {
     #[Route("/weather/{countryCode}/{city}")]
     public function forecast(
-        LocationRepository $locationRepository,
-        ForecastRepository $forecastRepository,
+        ForecastService $forecastService,
         string $countryCode, 
         string $city
         ) : Response
     {
-        $location = $locationRepository->findOneBy([
-            'countryCode' => $countryCode,
-            'name' => $city,
-        ]);
-        if (!$location){
-            throw $this->createNotFoundException("Location not found");
+        try {
+            list($location, $forecasts) = $forecastService->getForecastForLocationName($countryCode, $city); 
+        } catch (LocationNotFoundException $e){
+            throw $this->createNotFoundException('Location not found');
         }
-        
-        $forecasts = $forecastRepository->findForForecast($location);
 
         $response = $this->render('weather/forecast.html.twig', [
             'forecasts' => $forecasts,   
